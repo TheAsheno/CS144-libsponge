@@ -16,26 +16,26 @@ StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity),
     buffer.resize(capacity);
 }
 
-long StreamReassembler::merge_block(Node &elm1, const Node &elm2) {
+long StreamReassembler::merge_block(Node &a, const Node &b) {
     Node x, y;
-    if (elm1.begin > elm2.begin) {
-        x = elm2;
-        y = elm1;
+    if (a.begin > b.begin) {
+        x = b;
+        y = a;
     }
     else {
-        x = elm1;
-        y = elm2;
+        x = a;
+        y = b;
     }
     if (x.begin + x.length < y.begin)
         return -1;
     else if (x.begin + x.length >= y.begin + y.length) {
-        elm1 = x;
+        a = x;
         return y.length;
     }
     else {
-        elm1.begin = x.begin;
-        elm1.data = x.data + y.data.substr(x.begin + x.length - y.begin);
-        elm1.length = elm1.data.length();
+        a.begin = x.begin;
+        a.data = x.data + y.data.substr(x.begin + x.length - y.begin);
+        a.length = a.data.length();
         return x.begin + x.length - y.begin;
     }
 }
@@ -80,7 +80,7 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
             }
         }
         blocks.insert(elm);
-        if (!blocks.empty() && blocks.begin()->begin == head_index) {
+        if (!blocks.empty() && blocks.begin()->begin == head_index && _output.remaining_capacity() > 0) {
             const Node head_block = *blocks.begin();
             size_t write_bytes = _output.write(head_block.data);
             head_index += write_bytes;
