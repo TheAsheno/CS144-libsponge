@@ -99,3 +99,7 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
 size_t StreamReassembler::unassembled_bytes() const { return unassembled_byte; }
 
 bool StreamReassembler::empty() const { return unassembled_byte == 0; }
+
+size_t StreamReassembler::get_head() { return head_index; }
+
+bool StreamReassembler::input_ended() { return _output.input_ended(); }
